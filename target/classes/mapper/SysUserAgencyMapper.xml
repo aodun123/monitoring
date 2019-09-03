@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.orgmapper.SysUserAgencyMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.SysUserAgency" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sys_user_id" property="sysUserId" jdbcType="INTEGER" />
+    <result column="sys_agency_id" property="sysAgencyId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sys_user_id, sys_agency_id
+  </sql>
+  <select id="getUserAgency" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes" parameterType="java.lang.Integer" >
+    select ua.sys_user_id AS id,0 AS pId,su.username AS name from sys_user_agency as ua join sys_user as su on ua.sys_user_id=su.id
+      where ua.sys_agency_id = #{sysAgencyId,jdbcType=INTEGER}
+  </select>
+  <select id="getUserAgencyList" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysUserAgency" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user_agency
+    where sys_agency_id = #{sysAgencyId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getSysAgencyId" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysUserAgency" parameterType="java.lang.Integer" >
+    select
+    sys_agency_id
+    from sys_user_agency
+    where sys_user_id = #{userid,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user_agency
+    where sys_agency_id = #{sysAgencyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysUserAgency" >
+    insert into sys_user_agency (sys_user_id, sys_agency_id) values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.sysUserId,jdbcType=INTEGER},#{item.sysAgencyId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+</mapper>

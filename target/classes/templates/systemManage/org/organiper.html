@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>组织机构设置人员</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<form id="layui-form" class="layui-form" action="" lay-filter="component-form-group">
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-role" style="padding: 20px 0 0 0;">
+  <input type="hidden" id="uid" name="uid">
+  <div class="layui-form-item">
+    <label class="layui-form-label">组织机构名</label>
+    <div class="layui-input-inline" style="width:305px;">
+      <input type="text" id="agencyName" name="agencyName" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">人员列表</label>
+    <input type="hidden" id="selectUser" name="selectUser">
+  </div>
+  <div class="layui-form-item layui-hide">
+    <input type="button" lay-submit lay-filter="LAY-user-submit" id="LAY-user-submit" value="确认">
+  </div>
+</div>
+</form>
+<div class="layui-row" style="margin-left: 16px;">
+    <div class="layui-col-md5 fl" style="width: 45%">
+        <select id="leftSelect" multiple="multiple" size="20" style="width: 90%;height: 250px">
+        </select>
+    </div>
+    <div class="layui-col-md2 layui-zugl fl"  style="width: 10%;height: 10%;top: 100px;left: 10px">
+        <button id="right" class="layui-btn layui-btn-primary layui-btn-xs"> >> </button><br/><br/>
+        <button id="left" class="layui-btn layui-btn-primary layui-btn-xs"> << </button>
+    </div>
+    <div class="layui-col-md5 fr"  style="width: 45%">
+        <select id="rightSelect" multiple="multiple" size="20" style="width: 90%;height: 250px">
+        </select>
+    </div>
+</div>
+
+<script src="layuiadmin/layui/layui.js"></script>
+<script src="lib/jquery/1.9.1/jquery.js"></script>
+<script type="text/javascript" src="js/getUrlParam.js"></script>
+<!--input相关设置存放-->
+<script src="js/inputConfig.js"></script>
+<script>
+    var selData = [];
+    var sysAgencyId = UrlParam.paramValues("sysAgencyId");
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,upload = layui.upload ;
+    })
+    //查询出所有的用户人员
+    $(function(){
+        $.ajax({
+            url: 'sysuser/queryUser?sysAgencyId=0',
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                selData = data;
+            },
+            error: function () {
+                layer.msg("获取人员列表失败");
+            }
+        });
+    });
+    function selFormat(userId) {
+        for(var i=0;i<selData.length;i++) {
+            if(selData[i].id == userId) {
+                return selData[i].username;
+            }
+        }
+    }
+    //查询出所有的用户人员
+    $(function(){
+        $.ajax({
+            url: 'sysuser/queryUser?sysAgencyId='+sysAgencyId,
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                var optionstring = "";
+                for (var j = 0; j < data.length; j++) {
+                    optionstring += "<option value=\"" + data[j].id + "\" >" + data[j].username + "</option>";
+                }
+                $("#leftSelect").append(optionstring);
+            },
+            error: function () {
+                layer.msg("获取人员列表失败");
+            }
+        });
+    });
+    //查询出该机构已有的用户人员
+    $(function(){
+        $.ajax({
+            url: 'useragency/queryUserAgency?sysAgencyId='+sysAgencyId,
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                var optionstring = "";
+                for (var j = 0; j < data.length; j++) {
+                    optionstring += "<option value=\"" + data[j].id + "\" >" + data[j].name + "</option>";
+                }
+                $("#rightSelect").append(optionstring);
+            },
+            error: function () {
+                layer.msg("获取已有人员列表失败");
+            }
+        });
+    });
+    //根据角色表中的数据动态生成checkbox控件
+    $(function(){
+        $.ajax({
+            url: 'sysrole/selectAllRole',
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                var status = data.optStatusCode;
+                if (status == 10400) {
+                    var checkboxDiv = document.getElementById("rolelist");
+                    for(var i=0;i<data.data.length;i++){
+                        var arr=data.data[i];
+                        // 加入复选框
+                        var checkBox=document.createElement("input");
+                        checkBox.setAttribute("type","checkbox");
+                        checkBox.setAttribute("name", "role");
+                        checkBox.setAttribute("value", arr['id']);
+                        checkBox.setAttribute("title", arr['rolename']);
+                        checkBox.setAttribute("lay-skin", "primary");
+                        checkboxDiv.appendChild(checkBox);
+                    }
+                } else {
+                    layer.msg("获取角色列表失败");
+                }
+            },
+            error: function () {
+                layer.msg("获取角色列表失败");
+            }
+        });
+    });
+
+    //获取选中的 user的值
+    function getUserSelectedValues() {
+        var userStr = document.getElementById("rightSelect");
+        var str = "";
+        if(userStr){
+            for(var i=0; i<userStr.options.length; i++){
+                str += userStr.options[i].value;
+                if(i!=userStr.options.length-1) str += "、";
+            }
+        }
+        $("#selectUser").val(str.toString());
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function (){
+        //双击将选中的option追加至rightSelect中
+        $("#leftSelect").dblclick(function (){
+            $("#leftSelect option:selected").prependTo("#rightSelect");
+        });
+        //双击将选中的option追加至leftSelect中
+        $("#rightSelect").dblclick(function (){
+            $("#rightSelect option:selected").prependTo("#leftSelect");
+        });
+        //点击第一个button按钮，将leftSelect中选中的option追加到rightSelect中
+        $("#right").click(function (){
+            $("#leftSelect option:selected").prependTo("#rightSelect");
+        });
+        //点击第三个button按钮，将rightSelect中选中的option追加到leftSelect中
+        $("#left").click(function (){
+            $("#rightSelect option:selected").prependTo("#leftSelect");
+        });
+    });
+</script>
+</body>
+</html>

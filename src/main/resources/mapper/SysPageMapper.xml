@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.sysmapper.SysPageMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.SysPage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="descritpion" property="descritpion" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="page_order" property="pageOrder" jdbcType="VARCHAR" />
+    <result column="page_type" property="pageType" jdbcType="VARCHAR" />
+    <result column="page_jb" property="pageJb" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, descritpion, url, pid, page_order,page_type,page_jb
+  </sql>
+
+  <select id="findByAdminUserId" parameterType="string" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysPage">
+      select p.*
+        from sys_user u
+        LEFT JOIN sys_role_user sru on u.id= sru.Sys_User_id
+        LEFT JOIN sys_role r on sru.Sys_Role_id=r.id
+        LEFT JOIN sys_resources_permission_role spr on spr.role_id=r.id
+        LEFT JOIN sys_resources_page p on p.id = spr.resource_id
+        where u.id=#{userId} and spr.resource_type = 1
+ </select>
+
+  <select id="selectPages" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysPage">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM
+    sys_resources_page
+      <where>
+          <if test="pagename != null and pagename != ''">
+              and name like CONCAT('%', #{pagename}, '%')
+          </if>
+      </where>
+  </select>
+
+
+    <select id="selectAllPages" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysPage">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        sys_resources_page
+    </select>
+
+    <select id="findAllOperation" resultType="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation">
+        SELECT
+        btn_id,btn_code,btn_name,btn_title,page_id
+        FROM
+        sys_resources_operation
+    </select>
+
+    <select id="queryType" resultType="com.cn.uvfortune.infrastructure.repository.entity.SysPage">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        sys_resources_page
+        where
+        page_jb = '1'
+    </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_resources_page
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_resources_page
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysPage" >
+    insert into sys_resources_page (name, descritpion,
+      url, pid, page_order,page_type,page_jb
+      )
+    values (#{name,jdbcType=VARCHAR}, #{descritpion,jdbcType=VARCHAR},
+      #{url,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, #{pageOrder,jdbcType=VARCHAR}
+      , #{pageType,jdbcType=VARCHAR}, #{pageJb,jdbcType=VARCHAR}
+      )
+  </insert>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysPage" >
+    update sys_resources_page
+    set sKey = #{name,jdbcType=VARCHAR},
+      descritpion = #{descritpion,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      page_order = #{pageOrder,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.orgmapper.OrgMapper" >
+    <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.SysOrg" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="orgName" property="orgname" jdbcType="VARCHAR" />
+        <result column="orgDescription" property="orgdescription" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, orgName, orgDescription
+    </sql>
+    <select id="getOrgById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_org
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteOrgInfo" parameterType="java.lang.Integer" >
+        delete from sys_org where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <insert id="insertOrgInfo" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysOrg" >
+        insert into sys_org (id, orgName, orgDescription
+        )
+        values (#{id,jdbcType=INTEGER}, #{orgname,jdbcType=VARCHAR}, #{orgdescription,jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateOrgInfo" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysOrg" >
+        update sys_org
+        set orgName = #{orgname,jdbcType=VARCHAR},
+        orgDescription = #{orgdescription,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="getOrgByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_org
+        <where>
+            <if test="orgname!='null' and orgname!='' and orgname!=null">
+                and orgName like '%${orgname}%'
+            </if>
+        </where>
+    </select>
+    <select id="getOrgNodes" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes"  >
+        select id,0 AS pId,orgName AS name from sys_org
+    </select>
+
+    <select id="getOrgNodesByUser" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes" parameterType="java.lang.String" >
+        select id,0 AS pId,orgName AS name from sys_org where id in(select org_id from sys_org_agency as oa join sys_user_agency as ua on oa.id=ua.sys_agency_id where ua.sys_user_id = #{userId,jdbcType=INTEGER})
+    </select>
+
+    <resultMap id="BaseResultMap2" type="com.cn.uvfortune.infrastructure.repository.entity.SysOrgAgency" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="org_id" property="orgId" jdbcType="INTEGER" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="agency_name" property="agencyName" jdbcType="VARCHAR" />
+        <result column="agency_num" property="agencyNum" jdbcType="INTEGER" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List2" >
+        id, org_id, parent_id, agency_name, agency_num, description
+    </sql>
+    <select id="getOrgAgencyById" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List2" />
+        from sys_org_agency
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据用户id查询机构-->
+    <select id="queryUserAgencyById" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+        select
+        oa.*
+        from sys_org_agency oa join sys_user_agency ua on oa.id = ua.sys_agency_id
+        where ua.sys_user_id = #{userid,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryUserAgencyall" resultMap="BaseResultMap2">
+        select
+        oa.*
+        from sys_org_agency oa
+    </select>
+
+    <delete id="deleteOrgAgencyInfo" parameterType="java.lang.Integer" >
+        delete from sys_org_agency
+        <where>
+            and id in
+            <foreach item="id" collection="list" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+    <delete id="deleteOrgAgencyByOrgId" parameterType="java.lang.Integer" >
+        delete from sys_org_agency
+        <where>
+            and org_id in
+            <foreach item="orgId" collection="list" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </where>
+    </delete>
+    <insert id="insertOrgAgencyInfo" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysOrgAgency" >
+        insert into sys_org_agency (id, org_id, parent_id,
+        agency_name, agency_num, description
+        )
+        values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER},
+        #{agencyName,jdbcType=VARCHAR}, #{agencyNum,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateOrgAgencyInfo" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysOrgAgency" >
+        update sys_org_agency
+        set org_id = #{orgId,jdbcType=INTEGER},
+        parent_id = #{parentId,jdbcType=INTEGER},
+        agency_name = #{agencyName,jdbcType=VARCHAR},
+        agency_num = #{agencyNum,jdbcType=INTEGER},
+        description = #{description,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="getOrgAgencyByName" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List2" />
+        from sys_org_agency
+        where agency_name like '%${agencyName}%'
+    </select>
+    <select id="getOrgAgencyNodes" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes"  >
+        select id,org_id AS pId,agency_name AS name from sys_org_agency
+    </select>
+    <select id="getOrgAgencyNodesByOrgId" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes" parameterType="java.lang.Integer" >
+        select id,org_id AS pId,agency_name AS name from sys_org_agency where org_id=#{orgId,jdbcType=INTEGER} and parent_id=0
+    </select>
+    <select id="getAgencyNodesByOrgId" resultType="com.cn.uvfortune.infrastructure.repository.entity.TreeNode.ZNodes" parameterType="java.lang.Integer" >
+        select id,parent_id AS pId,agency_name AS name from sys_org_agency where org_id=#{orgId,jdbcType=INTEGER} and parent_id!=0
+    </select>
+    <select id="getOrgAgencyByTreeId" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List2" />
+        from sys_org_agency
+        <where>
+            <if test="pId!='null' and pId!='' and pId!=null">
+                <if test="treeId!='null' or treeId!='' or treeId!=null">
+                    and id = #{treeId}
+                </if>
+            </if>
+            <if test="pId=='null' or pId=='' or pId==null">
+                <if test="treeId!='null' and treeId!='' and treeId!=null">
+                    and org_id = #{treeId}
+                </if>
+            </if>
+        </where>
+    </select>
+    <select id="getOrgAgencyByOrgId" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List2" />
+        from sys_org_agency
+        where org_id=#{orgId,jdbcType=INTEGER}
+    </select>
+</mapper>

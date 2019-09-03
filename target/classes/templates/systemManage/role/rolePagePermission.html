@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>平台管理-设置角色页面权限</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <!--zTree_v3-->
+  <link rel="stylesheet" href="lib/zTree_v3/css/demo.css" type="text/css">
+  <link rel="stylesheet" href="lib/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery.ztree.core.js"></script>
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery.ztree.excheck.js"></script>
+  <!--input相关设置存放-->
+  <script src="js/inputConfig.js"></script>
+</head>
+<body>
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+  <input type="hidden" id="uid" name="uid">
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色名称</label>
+    <div class="layui-input-inline">
+      <input type="text" id="rolename" name="rolename" disabled="disabled" placeholder="请输入角色名称" autocomplete="off" class="layui-input" style="width:305px;">
+    </div>
+  </div>
+  <input type="hidden" id="selectedPage" name="selectedPage">
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">菜单树</label>
+    <div class="layui-input-block">
+      <ul id="treePage" class="ztree" style="width: 290px;"></ul>
+    </div>
+  </div>
+  <div class="layui-form-item layui-hide">
+    <input type="button" lay-submit lay-filter="LAY-user-submit" id="LAY-user-submit" value="保存">
+  </div>
+</div>
+<script src="layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,upload = layui.upload ;
+    })
+</script>
+<!--zTree组件的操作-->
+<SCRIPT type="text/javascript">
+    var setting = {
+        check: {
+            enable: true,
+            chkboxType: { "Y" : "p", "N" : "s" }
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback:{
+            beforeCheck:true,
+            onCheck:onCheck
+        }
+    };
+
+    $(document).ready(function(){
+        $.ajax({
+            url: 'rolepermission/queryAllPage',
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                var status = data.optStatusCode;
+                if (status == 10400) {
+                    var treeObj = $.fn.zTree.init($("#treePage"), setting, data.data);
+                    treeObj.expandAll(true);
+                } else {
+                    layer.msg("获取页面信息失败");
+                }
+            }
+        });
+
+    });
+
+    function onCheck(e,treeId,treeNode){
+        var treeObj=$.fn.zTree.getZTreeObj("treePage"),
+            nodes=treeObj.getCheckedNodes(true),
+            selectedStr="";
+        for(var i=0;i<nodes.length;i++){
+            selectedStr+=nodes[i].id + "、";
+            //console.log("节点id:"+nodes[i].id+"节点名称"+selectedStr); //获取选中节点的值
+        }
+        selectedStr = selectedStr.substr(0,selectedStr.length-1);
+        $("#selectedPage").val(selectedStr.toString());
+    }
+
+
+    function initEditZtree(roleid) {
+        $.ajax({
+            url: 'rolepermission/queryPageById?roleid='+roleid,
+            type:"get",
+            dataType: "json",
+            success: function (data) {
+                var status = data.optStatusCode;
+                if (status == 10400) {
+                    //查询到该角色的权限，给zTree赋值
+                    //根据树的name属性动态设置前面的复选框为选中
+                    // 获取树对象
+                    var treeObj = $.fn.zTree.getZTreeObj("treePage");
+                    // 获取所有树节点
+                    var nodes = treeObj.transformToArray(treeObj.getNodes());
+                    // 遍历树节点设置树节点为选中
+                    for(var j=0;j<data.data.length;j++){
+                        var pageArr=data.data[j];
+                        for (var k = 0; k < nodes.length; k++) {
+                            if(nodes[k].id == pageArr['id']){
+                                nodes[k].checked = true;
+                                treeObj.updateNode(nodes[k],true);
+                            }
+                        }
+                    }
+                } else {
+                    layer.msg("获取页面信息失败");
+                }
+            }
+        });
+    }
+</SCRIPT>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.sysmapper.SystemLogMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.SystemLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="log_type" property="logType" jdbcType="VARCHAR" />
+    <result column="log_level" property="logLevel" jdbcType="VARCHAR" />
+    <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
+    <result column="operation_user_id" property="operationUserId" jdbcType="INTEGER" />
+    <result column="log_content" property="logContent" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, log_type, log_level, ip_address, operation_user_id, log_content, gmt_create, 
+    gmt_modified
+  </sql>
+
+  <!--新增日志-->
+  <insert id="insert" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SystemLog" >
+    insert into sys_log (id, log_type, log_level, 
+      ip_address, operation_user_id, log_content)
+    values (#{id,jdbcType=INTEGER}, #{logType,jdbcType=VARCHAR}, #{logLevel,jdbcType=VARCHAR}, 
+      #{ipAddress,jdbcType=VARCHAR}, #{operationUserId,jdbcType=INTEGER}, #{logContent,jdbcType=VARCHAR})
+  </insert>
+
+  <!--根据id查询日志单条数据-->
+  <select id="getLog" resultType="com.cn.uvfortune.infrastructure.log.annotation.LogModel" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--根据条件或者无条件分页查询日志数据-->
+  <select id="listLog" resultType="java.util.Map">
+    select l.id, l.log_type logType, l.log_level logLevel, l.ip_address ipAddress, u.realname operationUserId, l.log_content logContent, l.gmt_create gmtCreate,
+    l.gmt_modified gmtModified
+    from sys_log l left join sys_user u on l.operation_user_id=u.id
+    <where>
+      1=1
+      <if test="startTime!=null and startTime!=''">
+        and l.gmt_create &gt;= #{startTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endTime!=null and endTime!=''">
+        and l.gmt_create &lt;= #{endTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="operator!=null and operator!=''">
+        and u.realname like concat('%',#{operator,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="logInner!=null and logInner!=''">
+        and l.log_content like concat('%',#{logInner,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="log_type!=null and log_type!=''">
+        and l.log_type = #{log_type,jdbcType=VARCHAR}
+      </if>
+    </where>
+    order by gmt_modified desc
+  </select>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.sysmapper.ResourcesOperationMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation" >
+    <id column="btn_id" property="btnId" jdbcType="VARCHAR" />
+    <result column="btn_code" property="btnCode" jdbcType="VARCHAR" />
+    <result column="btn_name" property="btnName" jdbcType="VARCHAR" />
+    <result column="btn_title" property="btnTitle" jdbcType="VARCHAR" />
+    <result column="page_id" property="pageId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    btn_id, btn_code, btn_name, btn_title, page_id
+  </sql>
+
+  <select id="selectOperation" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List" />
+    FROM
+    sys_resources_operation
+  </select>
+
+  <select id="queryOpeationById" parameterType="string" resultType="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation" >
+    select o.*
+    from sys_user u
+    LEFT JOIN sys_role_user sru on u.id= sru.Sys_User_id
+    LEFT JOIN sys_role r on sru.Sys_Role_id=r.id
+    LEFT JOIN sys_resources_permission_role spr on spr.role_id=r.id
+    LEFT JOIN sys_resources_operation o on o.btn_id = spr.resource_id
+    where u.id=#{userid} and spr.resource_type = 2
+  </select>
+
+  <select id="queryOpeationByPageId" parameterType="string" resultType="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation" >
+    select o.*
+    from sys_user u
+    LEFT JOIN sys_role_user sru on u.id= sru.Sys_User_id
+    LEFT JOIN sys_role r on sru.Sys_Role_id=r.id
+    LEFT JOIN sys_resources_permission_role spr on spr.role_id=r.id
+    LEFT JOIN sys_resources_operation o on o.btn_id = spr.resource_id
+    where u.id=#{userid} and o.page_id=#{pageid} and spr.resource_type = 2
+  </select>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select o.*
+    from sys_user u
+    LEFT JOIN sys_role_user sru on u.id= sru.Sys_User_id
+    LEFT JOIN sys_role r on sru.Sys_Role_id=r.id
+    LEFT JOIN sys_resources_permission_role spr on spr.role_id=r.id
+    LEFT JOIN sys_resources_operation o on o.id = spr.resource_id
+    where u.id=#{userId} and o.pageid = #{pageid}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_resources_operation
+    where btn_id = #{btnId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation" >
+    insert into sys_resources_operation (btn_id, btn_code, btn_name, 
+      btn_title, page_id)
+    values (#{btnId,jdbcType=VARCHAR}, #{btnCode,jdbcType=VARCHAR}, #{btnName,jdbcType=VARCHAR}, 
+      #{btnTitle,jdbcType=VARCHAR}, #{pageId,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.cn.uvfortune.infrastructure.repository.entity.Sys_Resources_Operation" >
+    update sys_resources_operation
+    set btn_code = #{btnCode,jdbcType=VARCHAR},
+      btn_name = #{btnName,jdbcType=VARCHAR},
+      btn_title = #{btnTitle,jdbcType=VARCHAR},
+      page_id = #{pageId,jdbcType=VARCHAR}
+    where btn_id = #{btnId,jdbcType=VARCHAR}
+  </update>
+</mapper>

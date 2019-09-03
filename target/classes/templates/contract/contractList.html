@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>角色管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!--styles-->
+    <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="css/style.css" media="all">
+    <!--javascript-->
+    <script src="layuiadmin/layui/layui.js"></script>
+    <script src="lib/jquery/1.9.1/jquery.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<div id="pageBody">
+    <div class="layui-fluid">
+        <!--查询及数据表格-->
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="formTitle searchTitle">
+                    <span>数据筛选</span><span class="titleRight" id="advancedSearch">高级搜索</span>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">关键词</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="sKey" name="sKey" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">合同密集</label>
+                        <div class="layui-input-block">
+                            <select id="sex" name="sex" lay-verify="required">
+                                <option value=""></option>
+                                <option value="1">公开</option>
+                                <option value="0">不公开</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">存放地点</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="sKey" name="sKey" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">金额</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">签署日期</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_min" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_max" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">上传日期</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_min" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="price_max" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-normal layuiadmin-btn-useradmin" lay-submit
+                                    lay-filter="LAY-user-search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                查询
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lineTwo"></div>
+            <div class="layui-card-body">
+                <!--标题-->
+                <div class="formTitle">
+                    数据列表
+                </div>
+                
+                <div style="padding-bottom: 10px;" class="buttonsWraper"></div>
+				<!--添加组织
+                <div style="padding-bottom: 10px;" class="buttonsWraper">
+                    <button style="display: block" name="xzjs" id="addbtn" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="add"><i
+                            class="layui-icon layui-icon-add-1"></i>新增角色
+                    </button>
+                    <button style="display: block" name="szcdqx" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="editPagePermission">
+                        <i class="layui-icon layui-icon-edit"></i>设置菜单权限
+                    </button>
+                    <button style="display: block" name="szgnqx" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin"
+                            data-type="editFunctionPermission"><i class="layui-icon layui-icon-edit"></i>设置功能权限
+                    </button>
+                </div>-->
+                <!--组织的表格-->
+                <table id="LAY-contractlist-manage" lay-filter="LAY-contractlist-manage"></table>
+                <!--table中插入的值-->
+                <script type="text/html" id="table-useradmin-user">
+                    <span class="conButtonWraper">
+                        <a class="tableButton1" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
+                    </span>
+                        <!--<a style="display: none" name="bjjsxx" class="tableButton1" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a style="display: none" name="scjsxx" class="tableButton1" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>-->
+                </script>
+                <script type="text/html" id="secretTpl">
+					{{# if(d.secret===1){ }}
+						<span style="color: #007DDB;">公开</span> 
+					{{# } else { }}
+						<span style="color: #92B8B1;">不公开</span> 
+					{{# } }}
+				</script>
+				<script type="text/html" id="isentityTpl">
+					{{# if(d.isentity===1){ }}
+						<span style="color: #007DDB;">是</span> 
+					{{# } else { }}
+						<span style="color: #92B8B1;">否</span> 
+					{{# } }}
+				</script>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!--输入框的调整-->
+<script src="js/inputConfig.js"></script>
+<script>
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'contractList'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            table = layui.table
+        //监听搜索
+        form.on('submit(LAY-user-search)', function (data) {
+            var field = data.field
+            //执行重载
+            table.reload('LAY-contractlist-manage', {
+                where: field
+            });
+        });
+
+        //事件
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: '合同录入'
+                    , content: 'contractadd'
+                    , maxmin: false
+                    , area: ['700px', '600px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+                            //提交 Ajax 成功后，静态更新表格中的数
+                            var jsonstr = {
+                                "rolename": field.rolename,
+                                "roledescription": field.roledescription
+                            };
+                            $.ajax({
+                                url: 'sysrole/role',
+                                type: "post",
+                                contentType: "application/json",//设置请求参数类型为json字符串
+                                data: JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                dataType: "json",
+                                success: function (data) {
+                                    var status = data.optStatusCode;
+                                    if (status == 10400) {
+                                        layer.close(index); //关闭弹层
+                                        layer.msg("录入成功", {icon: 1});
+                                        $(".layui-laypage-btn").click();//数据刷新
+                                    } else {
+                                        layer.msg("录入数据失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("录入数据失败");
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            editPagePermission: function () {
+                var checkStatus = table.checkStatus('LAY-contractlist-manage')
+                    , checkData = checkStatus.data; //得到选中的数据
+                if (checkData.length === 0) {
+                    return layer.msg('请选择角色');
+                } else if (checkData.length === 1) {
+                    layer.open({
+                        type: 2
+                        , title: '角色-菜单授权'
+                        , content: 'rolePagePermission'
+                        , maxmin: false
+                        , area: ['480px', '560px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'LAY-user-submit'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field; //获取提交的字段
+                                //alert(field.selectedPage);
+                                //提交 Ajax 成功后，静态更新表格中的数
+                                var jsonstr = {
+                                    "roleId": field.uid,
+                                    "resourceType": "1"
+                                };
+                                $.ajax({
+                                    url: 'rolepermission/rolePermission?reId=' + field.selectedPage,
+                                    type: "post",
+                                    contentType: "application/json",//设置请求参数类型为json字符串
+                                    data: JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                    dataType: "json",
+                                    success: function (data) {
+                                        var status = data.optStatusCode;
+                                        if (status == 10400) {
+                                            layer.close(index); //关闭弹层
+                                            layer.msg("角色设置菜单授权成功", {icon: 1});
+                                            $(".layui-laypage-btn").click();//数据刷新
+                                        } else {
+                                            layer.msg("角色设置菜单授权失败");
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("角色设置菜单授权失败");
+                                    }
+                                });
+                            });
+                            submit.trigger('click');
+                        }
+                        , success: function (layero, index) {
+                            var body = layer.getChildFrame('body', index);  //巧妙的地方在这里哦
+                            body.contents().find("#uid").val(checkData[0].id);
+                            body.contents().find("#rolename").text(checkData[0].rolename);
+                            var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象;
+                            //调用弹出界面的方法,传入参数：用户ID
+                            iframeWin.initEditZtree(checkData[0].id);
+                        }
+                    });
+                } else {
+                    return layer.msg('只能选中一个角色进行设置菜单权限');
+                }
+
+            },
+            editFunctionPermission: function () {
+                var checkStatus = table.checkStatus('LAY-contractlist-manage')
+                    , checkData = checkStatus.data; //得到选中的数据
+                if (checkData.length === 0) {
+                    return layer.msg('请选择角色');
+                } else if (checkData.length === 1) {
+                    layer.open({
+                        type: 2
+                        , title: '角色-菜单功能授权'
+                        , content: 'roleFunctionPermission'
+                        , maxmin: false
+                        , area: ['680px', '560px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'LAY-user-submit'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+                            //调用弹出界面的方法
+                            iframeWindow.getFunctionCheckedValues();
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field; //获取提交的字段
+                                //alert(field.selectedPage);
+                                //提交 Ajax 成功后，静态更新表格中的数
+                                var jsonstr = {
+                                    "roleId": field.uid,
+                                    "resourceType": "2"
+                                };
+                                $.ajax({
+                                    url: 'rolepermission/rolePermission?reId=' + field.selectFunction,
+                                    type: "post",
+                                    contentType: "application/json",//设置请求参数类型为json字符串
+                                    data: JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                    dataType: "json",
+                                    success: function (data) {
+                                        var status = data.optStatusCode;
+                                        if (status == 10400) {
+                                            layer.close(index); //关闭弹层
+                                            layer.msg("角色设置菜单功能授权成功", {icon: 1});
+                                        } else {
+                                            layer.msg("角色设置菜单功能授权失败");
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg("角色设置菜单功能授权失败");
+                                    }
+                                });
+                            });
+                            submit.trigger('click');
+                        }
+                        , success: function (layero, index) {
+                            var body = layer.getChildFrame('body', index);  //巧妙的地方在这里哦
+                            body.contents().find("#uid").val(checkData[0].id);
+                            body.contents().find("#rolename").val(checkData[0].rolename);
+                            body.contents().find("#rolename").attr("disabled", true);
+                            var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象;
+                            //调用弹出界面的方法,传入参数：用户ID
+                            iframeWin.initEditCheckbox(checkData[0].id);
+                        }
+                    });
+                } else {
+                    return layer.msg('只能选中一个角色进行设置菜单权限');
+                }
+
+            }
+        };
+
+        $('.buttonsWraper').on('click','button',function(){
+            var events=$(this).attr('data-type');
+            active[events]();
+        });
+        /*$('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });*/
+    });
+</script>
+
+</html>

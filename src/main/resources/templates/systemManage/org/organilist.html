@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>平台管理-机构管理</title>
+  <meta sKey="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta sKey="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <!--zTree_v3-->
+  <link rel="stylesheet" href="lib/zTree_v3/css/demo.css" type="text/css">
+  <link rel="stylesheet" href="lib/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery.ztree.core.js"></script>
+  <script type="text/javascript" src="lib/zTree_v3/js/jquery.ztree.excheck.js"></script>
+  <!--input相关设置存放-->
+  <script src="js/inputConfig.js"></script>
+  <style>
+    .noDecoration a{
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layui-fluid noDecoration">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md2" style="background: #fff;">
+        <div style="background: #fff;height: 40px;line-height: 40px;text-indent: 1em;font-size: 14px;border-bottom: 1px solid #ccc;">组织机构</div>
+        <ul id="treePage" class="ztree" style="height:500px;background: #fff; overflow-y: auto; border: none;padding-left: 16px;margin-top: 0px;width: 90%" lay-submit lay-filter="LAY-user-search"></ul>
+      </div>
+
+      <div class="layui-col-md10">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <a style="display: none" name="tjjgxx" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="add"><i class="layui-icon layui-icon-add-1"></i>添加机构</a>
+                <a style="display: none" name="szry" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="setPerson"><i class="layui-icon layui-icon-username"></i>设置人员</a>
+                <a style="display: none" name="szjsxx" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="setRole"><i class="layui-icon layui-icon-util"></i>设置角色</a>
+            </div>
+
+            <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
+            <style>
+              .layui-table{
+                width: 100% !important;
+              }
+            </style>
+            <script type="text/html" id="orgIdTpl">
+              {{ selFormat(d.orgId) }}
+            </script>
+            <script type="text/html" id="parentIdTpl">
+              {{ selFormat1(d.parentId) }}
+            </script>
+
+            <script type="text/html" id="table-useradmin-user">
+              <a class="layui-btn layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-form"></i>查看</a>
+              <a style="display: none" name="bjzzjg" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+              <a style="display: none" name="sczzjg" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="layuiadmin/layui/layui.js"></script>
+  <script>
+  layui.config({
+    base: 'layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'organi', 'table'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+
+    //监听搜索
+    form.on('submit(LAY-user-search)', function(data){
+      var field = data.field;
+      //执行重载
+      table.reload('LAY-user-manage', {
+        where: field
+      });
+    });
+
+    //事件
+    var active = {
+        add: function(){
+            layer.open({
+                type: 2
+                ,title: '添加机构'
+                ,content: 'organiform'
+                ,maxmin: false
+                ,area: ['460px', '500px']
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    var iframeWindow = window['layui-layer-iframe'+ index]
+                        ,submitID = 'LAY-user-submit'
+                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                    //监听提交
+                    iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                        var field = data.field; //获取提交的字段
+//                        alert(field.orgname+"==="+field.orgdescription);
+                        //提交 Ajax 成功后，静态更新表格中的数
+                        var jsonstr = {
+                            "id":field.id,
+                            "orgId":field.orgId,
+                            "parentId":field.parentId,
+                            "agencyName":field.agencyName,
+                            "agencyNum":field.agencyNum,
+                            "description":field.description
+                        };
+                        $.ajax({
+                            url: '/org/addOrgAgency',
+                            type:"post",
+                            contentType:"application/json",//设置请求参数类型为json字符串
+                            data:JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                            dataType: "json",
+                            success: function (data) {
+                                var status = data.optStatusCode;
+                                if (status == 10400) {
+                                    layer.close(index); //关闭弹层
+                                    layer.msg("新增成功", {icon: 1});
+                                    $(".layui-laypage-btn").click();//数据刷新
+                                } else {
+                                    layer.msg("新增数据失败");
+                                }
+                            },
+                            error: function () {
+                                layer.msg("新增数据失败");
+                            }
+                        });
+
+                    });
+
+                    submit.trigger('click');
+                }
+            });
+        }
+        ,setPerson: function () {
+            var checkStatus = table.checkStatus('LAY-user-manage')
+                ,checkData = checkStatus.data; //得到选中的数据
+            if(checkData.length === 0){
+                return layer.msg('请选择数据');
+            }else if(checkData.length === 1){
+                layer.open({
+                    type: 2
+                    ,title: '设置人员'
+                    ,content: 'organiper?sysAgencyId='+checkData[0].id
+                    ,maxmin: false
+                    ,area: ['600px', '500px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'LAY-user-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象;
+                        //调用弹出界面的方法
+                        iframeWin.getUserSelectedValues();
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field; //获取提交的字段
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            //alert("rid:"+field.selectUser);
+                            var jsonstr = {
+                                "sysAgencyId":field.uid,
+                                "sysUserId":field.selectUser
+                            };
+                            $.ajax({
+                                url: 'useragency/updUserAgency?sysUserId='+field.selectUser+'&sysAgencyId='+field.uid,
+                                type:"put",
+                                contentType:"application/json",//设置请求参数类型为json字符串
+//                                data:JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                dataType: "json",
+                                success: function (data) {
+                                    var status = data.optStatusCode;
+                                    if (status == 10400) {
+                                        layer.close(index); //关闭弹层
+                                        layer.msg("设置人员成功", {icon: 1});
+                                        $(".layui-laypage-btn").click();//数据刷新
+                                    } else {
+                                        layer.msg("设置人员失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("设置人员失败");
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,success: function (layero, index) {
+                        var body = layer.getChildFrame('body', index);  //巧妙的地方在这里哦
+                        body.contents().find("#uid").val(checkData[0].id);
+                        body.contents().find("#agencyName").val(checkData[0].agencyName);
+                        body.contents().find("#agencyName").attr("disabled", true);
+                        var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象;
+                        //调用弹出界面的方法,传入参数：用户ID
+                        iframeWin.initCheckbox(checkData[0].id);
+                    }
+                });
+            }else{
+                return layer.msg('只能选中一个用户进行设置权限');
+            }
+        }
+        ,setRole: function () {
+            var checkStatus = table.checkStatus('LAY-user-manage')
+                ,checkData = checkStatus.data; //得到选中的数据
+            if(checkData.length === 0){
+                return layer.msg('请选择数据');
+            }else if(checkData.length === 1){
+                layer.open({
+                    type: 2
+                    ,title: '设置组织机构角色'
+                    ,content: 'organirole'
+                    ,maxmin: false
+                    ,area: ['460px', '500px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'LAY-user-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //调用弹出界面的方法
+                        iframeWindow.getRoleRadioValues();
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field; //获取提交的字段
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            var jsonstr = {
+                                "agencyId":field.uid,
+                                "sysRoleId":field.selectRole
+                            };
+                            $.ajax({
+                                url: 'roleUser/addUserRole',
+                                type:"post",
+                                contentType:"application/json",//设置请求参数类型为json字符串
+                                data:JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                dataType: "json",
+                                success: function (data) {
+                                    var status = data.optStatusCode;
+                                    if (status == 10400) {
+                                        layer.close(index); //关闭弹层
+                                        layer.msg("设置组织机构角色成功", {icon: 1});
+                                        $(".layui-laypage-btn").click();//数据刷新
+                                    } else {
+                                        layer.msg("设置组织机构角色失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("设置组织机构角色失败");
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,success: function (layero, index) {
+                        var body = layer.getChildFrame('body', index);  //巧妙的地方在这里哦
+                        body.contents().find("#uid").val(checkData[0].id);
+                        body.contents().find("#agencyName").val(checkData[0].agencyName);
+                        body.contents().find("#agencyName").attr("disabled", true);
+                        var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象;
+                        //调用弹出界面的方法,传入参数：用户ID
+                        iframeWin.initRadio(checkData[0].id);
+                    }
+                });
+            }else{
+                return layer.msg('只能选中一个用户进行设置权限');
+            }
+        }
+    };
+
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+
+  <!--zTree组件的操作-->
+  <script type="text/javascript">
+      var setting = {
+          check: {
+              enable: true,
+              chkboxType: { "Y" : "p", "N" : "s" }
+          },
+          data: {
+              simpleData: {
+                  enable: true
+              }
+          },
+          callback:{
+              beforeCheck:true,
+              onCheck:onCheck,
+              onClick:onClick
+          }
+      };
+
+      $(document).ready(function(){
+          $.ajax({
+              url: '/org/nodesByuser',
+              type:"get",
+              dataType: "json",
+              success: function (data) {
+                  var status = data.optStatusCode;
+
+                  if (status == 10400) {
+                      var treeObj = $.fn.zTree.init($("#treePage"), setting, data.data);
+                      treeObj.expandAll(true);
+                  } else {
+                      layer.msg("获取页面信息失败");
+                  }
+              }
+          });
+      });
+      function onClick(e,treeId,treeNode){
+          layui.config({
+              base: 'layuiadmin/' //静态资源所在路径
+          }).extend({
+              index: 'lib/index' //主入口模块
+          }).use(['index', 'organi', 'table'], function(){
+              var $ = layui.$
+                  ,form = layui.form
+                  ,table = layui.table;
+          table.reload('LAY-user-manage', {
+              where: {
+                  "treeId": treeNode.id,
+                  "pId": treeNode.pId,
+              }
+          });
+          });
+      }
+      function onCheck(e,treeId,treeNode){
+          var treeObj=$.fn.zTree.getZTreeObj("treePage"),
+              nodes=treeObj.getCheckedNodes(true),
+              selectedStr="";
+          for(var i=0;i<nodes.length;i++){
+              selectedStr+=nodes[i].id + "、";
+              console.log("节点id:"+nodes[i].id+"节点名称"+selectedStr); //获取选中节点的值
+          }
+          selectedStr = selectedStr.substr(0,selectedStr.length-1);
+      //    alert(selectedStr);
+      }
+  </script>
+  <script type="text/javascript">
+      var selData = [];
+      var selData1 = [];
+      // 加载下拉框数据
+      $(function () {
+          $.ajax({
+              url: "org/orglist" ,
+              type: "get",
+              dataType: "json",
+              success: function (data) {
+                  selData = data;
+                  setTimeout("selFormat()", 10000);
+              },
+              error: function (msg) {
+                  alert("下拉框加载出错了！");
+              }
+          });
+      });
+      $(function () {
+          $.ajax({
+              url: "org/agencylist" ,
+              type: "get",
+              dataType: "json",
+              success: function (data) {
+                  selData1 = data;
+              },
+              error: function (msg) {
+                  alert("下拉框加载出错了！");
+              }
+          });
+      });
+      function selFormat(orgId) {
+          for(var i=0;i<selData.length;i++) {
+              if(selData[i].id == orgId) {
+                  return selData[i].orgname;
+              }
+          }
+      }
+      function selFormat1(parentId) {
+          for(var i=0;i<selData1.length;i++) {
+              if(selData1[i].id == parentId) {
+                  return selData1[i].name;
+              }
+          }return "无上级机构";
+      }
+  </script>
+</body>
+</html>

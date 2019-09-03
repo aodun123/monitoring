@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>平台管理-新增项目</title>
+  <meta sKey="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta sKey="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<form id="layui-form" class="layui-form" action="" lay-filter="component-form-group">
+    <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+      <input type="hidden" id="id" name="id">
+      <div class="layui-form-item">
+        <label class="layui-form-label">项目名称<span class="necessa_mark">*</span></label>
+        <div class="layui-input-inline">
+          <input type="text" id="projectName" name="projectName" lay-verify="required" placeholder="请输入项目名称" autocomplete="off" class="layui-input" style="width:305px;">
+        </div>
+      </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">项目类型</label>
+            <div class="layui-input-block" style="width:305px;" >
+                <select id="projectType" name="projectType">
+                    <option value="1">服务器</option>
+                    <option value="2">网络设备</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">项目负责人<span class="necessa_mark">*</span></label>
+          <div class="layui-input-inline">
+            <input type="text" id="projectHeader" name="projectHeader" lay-verify="required" placeholder="请输入项目负责人" autocomplete="off" class="layui-input" style="width:305px;">
+        </div>
+      </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">项目联系人<span class="necessa_mark">*</span></label>
+          <div class="layui-input-inline">
+            <input type="text" id="projectContacts" name="projectContacts" lay-verify="required" placeholder="请输入项目联系人" autocomplete="off" class="layui-input" style="width:305px;">
+        </div>
+      </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">联系电话</label>
+          <div class="layui-input-inline">
+            <input type="text" id="telphoneNumber" name="telphoneNumber" lay-verify="phone" placeholder="请输入联系电话" autocomplete="off" class="layui-input" style="width:305px;">
+        </div>
+      </div>
+      <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-project-submit" id="LAY-project-submit" value="确认">
+      </div>
+    </div>
+</form>
+<script src="layuiadmin/layui/layui.js"></script>
+<!--input相关设置存放-->
+<script src="js/inputConfig.js"></script>
+<script>
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,upload = layui.upload ;
+    })
+</script>
+</body>
+</html>

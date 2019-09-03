@@ -1,0 +1,39 @@
+server:
+  port: 8083
+  max-http-header-size: 1048576
+  servlet:
+    session:
+      timeout: 6000s
+monitoring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/security_mysql
+      username: root
+      password: root
+      connection-test-query: select 1
+      connection-timeout: 4
+      maximum-pool-size: 5
+      minimum-idle: 2
+      driver-class-name: com.mysql.jdbc.Driver
+
+# mybatis config
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  config-location: classpath:mybatis-config.xml
+spring:
+  thymeleaf:
+    cache: false  #开发环境设置为false
+
+# Spring boot 日志配置
+logging:
+  level:
+    root: INFO
+    # 开启 mybatis 跟踪信息 (测试使用)
+    com:
+      zzbj:
+        organization:
+          infrastructure: DEBUG
+    org:
+      springframework:
+        security: info
+#debug: true

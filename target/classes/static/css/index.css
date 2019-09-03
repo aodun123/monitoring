@@ -1,0 +1,148 @@
+.layui-index{
+    height: 100%;
+}
+.layui-index-biaot{
+    background: #fff !important;
+}
+
+/****************内容区域****************/
+.layui-index-main{
+    background: #FFFFFF;
+    height:66%;
+}
+    .layui-main-fl{
+        height: 100%;
+        border-right: 0px solid #FFFFFF;
+    }
+        #layui-main-fl-banner{
+            height: 100%;
+            background: none !important;
+        }
+
+        .layui-zytj{
+            text-align: center;
+            width: 100%;
+            height: 30px;
+            font-size: 13px;
+        }
+
+            #layui-main-fl-banner .layadmin-carousel{
+                height: 88% !important;
+                background: none !important;
+            }
+
+        .layui-main-fl-gdan{
+            height: 50%;
+            border-top: 1px solid #fff;
+        }
+            .layui-main-fl-gdan .layadmin-carousel{
+                height: 88% !important;
+                background: none !important;
+            }
+
+
+    .layui-main-ent{
+        height: 100%;
+        border-right: 1px solid #fff;
+    }
+    .layui-main-ent-map{
+        height: 89%;
+    }
+        .layui-main-ent-mapp{
+            height: 99% !important;
+            background: none !important;
+        }
+
+    .layui-main-fr{
+        height: 100%;
+    }
+    .layui-main-fr-top{
+        height: 50%;
+        color: #fff;
+    }
+        .layui-main-fr-top-btn{
+            width: 100%;
+            height: 88%;
+            float: left;
+        }
+            .layui-main-fr-top-btn-li{
+                width: 83%;
+                height: 16%;
+                margin: 0 auto;
+                line-height: 30px;
+                padding-top: 7.5%;
+            }
+            .layui-main-fr-top-btn-li span{
+                width: 40%;
+                height: 100%;
+                font-size: 12px;
+            }
+            .layui-main-fr-top-btn-li ul{
+                width: 60%;
+                height: 100%;
+            }
+            .layui-main-fr-top-btn-li ul li{
+                width: 19%;
+                float: left;
+                background: #fff;
+                text-align: center;
+                font-weight: bold;
+                margin-left: 1%;
+            }
+            .layui-main-fr-top-btn-li ul li:first-child{
+                margin-left: 0px;
+            }
+
+
+
+    .layui-main-fl-gaot{
+        border-top: 1px solid #fff;
+        height: 50%;
+    }
+        .layui-main-fl-gaot .layadmin-carousel{
+            height: 88% !important;
+            background: none !important;
+        }
+
+/****************尾部区域****************/
+.layui-index-footer{
+    height:34%;
+    background: #fff;
+}
+.layui-index-ftcon{
+    height: 100%;
+    border-top: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+    .layui-index-ftcon-shul{
+        width: 95%;
+        height: 18%;
+        background: #fff;
+        margin: 1.6% auto;
+        color: #fff;
+    }
+        .layui-index-ftcon-shul > div{
+            width: 25%;
+            height: 80%;
+            margin-top: 1%;
+            border-left: 1px solid #fff;
+            text-align: center;
+            font-size: 12px;
+        }
+        .layui-index-ftcon-shul > div p{
+            height: 50%;
+            line-height: 150%;
+        }
+        .layui-index-ftcon-shul > div:first-child{
+            border: none;
+        }
+    .layui-index-ftcon-tux{
+        height: 64% !important;
+        background: none !important;
+    }
+
+
+
+
+
+

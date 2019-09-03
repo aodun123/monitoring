@@ -1,0 +1,143 @@
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
+/*************顶部导航*************/
+.defin{
+	min-width: 1024px;
+	height: 52px;
+	background: #0066cc;
+	border-bottom: 3px solid #337AB7;
+}
+.defin-nav{
+	height: 100%;
+}
+.defin-nav ul{
+	height: 52px;
+}
+.defin-nav ul li{
+	height: 100%;
+}
+.defin-nav ul li a{
+	background: none !important;
+	height: 100%;
+	font-size: 18px !important;
+	line-height: 52px;
+}
+.defin-nav ul .current{
+	border-bottom: 3px solid #ffa302;
+}
+.defin-nav ul .current > a{
+	color: #ffa302 !important;
+}
+.defin-admin{
+	background: #25609c;
+	height: 52px;
+}
+.defin-admin .dropDown_A{
+	height: 52px;
+	line-height: 52px;
+	font-size: 18px;
+}
+.defin-admin .dropDown_A i{
+	font-size: 18px;
+}
+.defin-admin ul li ul li a i{
+	float: left;
+	margin-top: -1px;
+	margin-right: 4px;
+}
+/*************左侧导航*************/
+.defin-aside{
+}
+/*.defin-aside .menu_dropdown{*/
+	/*margin-top: -10px;*/
+	/*border: none !important;*/
+/*}*/
+.defin-aside .menu_dropdown h4{
+	color: #669fc7;
+	text-indent: 1em;
+	height: 34px;
+	line-height: 34px;
+	border-bottom: 1px solid #E5E5E5;
+	background: #EEEEEE;
+}
+.defin-aside .menu_dropdown .bk_2 dl dt a{
+	text-decoration: none;
+}
+.Hui-aside{
+	moz-user-select: -moz-none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.defin-aside .Hui-aside h4{
+	color: #0066cc;
+	text-indent: 1em;
+	height: 34px;
+	line-height: 34px;
+	border-bottom: 1px solid #E5E5E5;
+	background: #EEEEEE;
+}
+.necessa_mark{
+	color:red;
+	padding-left:3px;
+}
+.Hui-tabNav, .Hui-tabNav .acrossTab li, .Hui-tabNav .acrossTab li em{
+	font-style: italic;
+	opacity: 0.86;
+}
+.active{
+	color:#135198!important;
+	font-weight: 700;
+}
+
+.layui-input, .layui-textarea{
+	border:1px solid #8fa5bb;
+}
+
+.layui-input::-webkit-input-placeholder, .layui-textarea::-webkit-input-placeholder{
+	color:#8c8b8a;
+}
+.layui-input:-moz-placeholder, .layui-textarea:-moz-placeholder{
+	color:#8c8b8a;
+}
+.layui-input::-moz-placeholder, .layui-textarea::-moz-placeholder{
+	color:#8c8b8a;
+}
+.layui-input:-ms-input-placeholder, .layui-textarea:-ms-input-placeholder{
+	color:#8c8b8a;
+}
+/*.layui-form-item .layui-input-block input{*/
+	/*width:190px;*/
+/*}*/
+.layui-form-select .layui-input{
+	padding-right:0!important;
+}
+.layui-form-select .layui-edge{
+	opacity: 0.8;
+}
+.layui-form-item .layui-inline button{
+	margin-left: 40px;
+}
+.layui-form-item .layui-inline button{
+	height: 35px;
+}
+.layui-form-label{
+	font-weight: 600;
+	color:#676767;
+}
+
+
+
+
+
+
+
+
+

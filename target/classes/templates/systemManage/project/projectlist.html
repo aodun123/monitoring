@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>平台管理-项目管理</title>
+    <meta sKey="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta sKey="viewport"
+          content="width=project-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form-item">
+                        <!--新增  1：项目负责人（projectPrincipal）-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">项目名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="projectName" name="projectName" placeholder="请输入项目名"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">项目负责人</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="projectPrincipal" name="projectPrincipal" placeholder="请输入项目负责人"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <!--<div class="layui-inline">
+                            <label class="layui-form-label">项目类型</label>
+                            <div class="layui-input-block" style="width: 100px;">
+                                <select name="projectType">
+                                    <option value="">请选择</option>
+                                    <option value="1">项目</option>
+                                </select>
+                            </div>
+                        </div>-->
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" lay-submit
+                                    lay-filter="LAY-project-search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>搜索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div style="padding-bottom: 10px;">
+                        <a style="display: none" name="xzxmxx" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin"
+                           data-type="add"><i class="layui-icon layui-icon-add-1"></i>新增项目信息</a>
+                        <a style="display: none" name="plscxm" class="layui-btn layui-btn-sm layuiadmin-btn-useradmin"
+                           data-type="batchdel"><i class="layui-icon layui-icon-delete"></i>批量删除</a>
+                    </div>
+
+                    <table id="LAY-project-manage" lay-filter="LAY-project-manage"></table>
+                    <style>
+                        .layui-table {
+                            width: 100% !important;
+                        }
+                    </style>
+
+                    <script type="text/html" id="deviceTypeTpl">
+                        {{#  if(d.projectType==="1"){ }}
+                        <span style="color: #007DDB;">服务器</span>
+                        {{#  } else if(d.projectType==="2"){ }}
+                        <span style="color: #51db64;">网络项目信息</span>
+                        {{#  } else { }}
+                        <span style="color: #92B8B1;">其它项目信息</span>
+                        {{#  } }}
+                    </script>
+                    <script type="text/html" id="table-useradmin-user">
+                        <a class="layui-btn layui-btn layui-btn-xs" lay-event="detail"><i
+                                class="layui-icon layui-icon-form"></i>查看</a>
+                        <a style="display: none" name="bjxm" class="layui-btn layui-btn-normal layui-btn-xs"
+                           lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                        <a style="display: none" name="scxm" class="layui-btn layui-btn-danger layui-btn-xs"
+                           lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="layuiadmin/layui/layui.js"></script>
+<!--input相关设置存放-->
+<script src="js/inputConfig.js"></script>
+<script>
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'project', 'table'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table;
+
+        //监听搜索
+        form.on('submit(LAY-project-search)', function (data) {
+            var field = data.field
+            //执行重载
+            table.reload('LAY-project-manage', {
+                where: field
+            });
+        });
+
+        //事件
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: '添加项目信息'
+                    , content: 'projectform'
+                    , maxmin: false
+                    , area: ['480px', '500px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-project-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+                            //提交 Ajax 成功后，静态更新表格中的数
+                            var jsonstr = {
+                                "projectName": field.projectName,
+                                "projectType": field.projectType,
+                                "projectHeader": field.projectHeader,
+                                "projectContacts": field.projectContacts,
+                                "telphoneNumber": field.telphoneNumber
+                            };
+                            $.ajax({
+                                url: 'project/saveProject',
+                                type: "post",
+                                contentType: "application/json",//设置请求参数类型为json字符串
+                                data: JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                                dataType: "json",
+                                success: function (data) {
+                                    var status = data.optStatusCode;
+                                    if (status == 10400) {
+                                        layer.close(index); //关闭弹层
+                                        layer.msg("新增成功", {icon: 1});
+                                        $(".layui-laypage-btn").click();//数据刷新
+                                    } else {
+                                        layer.msg("新增数据失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("新增数据失败");
+                                }
+                            });
+
+                        });
+
+                        submit.trigger('click');
+                    }
+                });
+            },
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-project-manage')
+                    , checkData = checkStatus.data; //得到选中的数据
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据');
+                }
+                layer.confirm('确定删除吗？', function (index) {
+                    var selectedUid = "";
+                    for (var i = 0; i < checkData.length; i++) {
+                        selectedUid += checkData[i].id + "、";
+                    }
+                    selectedUid = selectedUid.substr(0, selectedUid.length - 1);
+                    $.ajax({
+                        url: 'project/delProject?id=' + selectedUid,
+                        type: "delete",
+                        dataType: "json",
+                        success: function (data) {
+                            var status = data.optStatusCode;
+                            if (status == 10400) {
+                                layer.msg("批量删除成功", {icon: 1});
+                                $(".layui-laypage-btn").click();//数据刷新
+                            } else {
+                                layer.msg("批量删除数据失败");
+                            }
+                        },
+                        error: function () {
+                            layer.msg("批量删除数据失败");
+                        }
+                    });
+                });
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>平台管理-新增角色</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+  <input type="hidden" id="uid" name="uid">
+
+  <div class="layui-col-md6" style="padding-left: 20px;width: 480px !important;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">日志类型</label>
+      <div class="layui-input-inline">
+        <input type="text" id="logType" name="logType" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">日志等级</label>
+      <div class="layui-input-inline">
+        <input type="text" id="logLevel" name="logLevel" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">客户端ip</label>
+      <div class="layui-input-inline">
+        <input type="text" id="ipAddress" name="ipAddress" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">操作人</label>
+      <div class="layui-input-inline">
+        <input type="text" id="operationUserId" name="operationUserId" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-col-md6" style="padding-left: 40px;width: 460px !important;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">日志内容</label>
+      <div class="layui-input-inline">
+        <input type="text" id="logContent" name="logContent" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">创建时间</label>
+      <div class="layui-input-inline">
+        <input type="text" id="gmtCreate" name="gmtCreate" lay-verify="required" autocomplete="off" class="layui-input" style="width:305px;">
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="layuiadmin/layui/layui.js"></script>
+<!--input相关设置存放-->
+<script src="js/inputConfig.js"></script>
+<script>
+    layui.config({
+        base: 'layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,upload = layui.upload ;
+    })
+</script>
+</body>
+</html>

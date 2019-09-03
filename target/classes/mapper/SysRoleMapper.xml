@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.uvfortune.infrastructure.repository.mapper.sysmapper.SysRoleMapper" >
+    <resultMap id="BaseResultMap" type="com.cn.uvfortune.infrastructure.repository.entity.SysRole" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="rolename" property="rolename" jdbcType="VARCHAR" />
+        <result column="roledescription" property="roledescription" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    id, rolename, roledescription
+  </sql>
+    <!--分页条件查询角色信息-->
+    <select id="selectrole" resultType="com.cn.uvfortune.domain.model.security.Role">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        sys_role
+        <where>
+            <if test="_parameter != null">
+                and rolename like CONCAT('%', #{sKey}, '%')
+            </if>
+        </where>
+    </select>
+    <!--查询全部角色信息-->
+    <select id="selectAll" resultType="com.cn.uvfortune.domain.model.security.Role">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        sys_role s
+    </select>
+   <!-- 根据id查询实体-->
+    <select id="selectByPrimaryKey" resultType="com.cn.uvfortune.domain.model.security.Role" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_role
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--删除角色信息-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <!--添加角色信息-->
+    <insert id="insert" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysRole" >
+    insert into sys_role (id, rolename, roledescription
+      )
+    values (#{id,jdbcType=INTEGER}, #{rolename,jdbcType=VARCHAR}, #{roledescription,jdbcType=VARCHAR}
+      )
+  </insert>
+    <!--修改用户信息-->
+    <update id="updateByPrimaryKey" parameterType="com.cn.uvfortune.infrastructure.repository.entity.SysRole" >
+    update sys_role
+    set rolename = #{rolename,jdbcType=VARCHAR},
+      roledescription = #{roledescription,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

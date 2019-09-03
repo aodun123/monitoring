@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>平台管理-区域管理</title>
+  <meta sKey="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta sKey="viewport" content="width=project-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">区域名</label>
+                <div class="layui-input-block">
+                  <input type="text" id="regionName" name="regionName" placeholder="请输入区域名" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-inline">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-region-search">
+                  <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>搜索
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <a class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="add" style="display: none" name="xzqyxx"><i class="layui-icon layui-icon-add-1"></i>新增区域信息</a>
+                <a class="layui-btn layui-btn-sm layuiadmin-btn-useradmin" data-type="batchdel" style="display: none" name="plscqy"><i class="layui-icon layui-icon-delete"></i>批量删除</a>
+            </div>
+            
+            <table id="LAY-region-manage" lay-filter="LAY-region-manage"></table>
+            <style>
+              .layui-table{
+                width: 100% !important;
+              }
+            </style>
+            <script type="text/html" id="table-useradmin-user">
+              <a class="layui-btn layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-form"></i>查看</a>
+              <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" style="display: none" name="bjqy"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="display: none" name="scqy"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="layuiadmin/layui/layui.js"></script>
+  <!--input相关设置存放-->
+  <script src="js/inputConfig.js"></script>
+  <script>
+  layui.config({
+    base: 'layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'region', 'table'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+    
+    //监听搜索
+    form.on('submit(LAY-region-search)', function(data){
+      var field = data.field
+      //执行重载
+      table.reload('LAY-region-manage', {
+        where: field
+      });
+    });
+
+    //事件
+    var active = {
+        add: function(){
+            layer.open({
+                type: 2
+                ,title: '添加区域信息'
+                ,content: 'regionform'
+                ,maxmin: false
+                ,area: ['480px', '500px']
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    var iframeWindow = window['layui-layer-iframe'+ index]
+                        ,submitID = 'LAY-region-submit'
+                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                    //监听提交
+                    iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                        var field = data.field; //获取提交的字段
+                        //提交 Ajax 成功后，静态更新表格中的数
+                        var jsonstr = {
+                            "regionName":field.regionName,
+                            "regionNumber":field.regionNumber,
+                            "regionDesc":field.regionDesc,
+                            "regionSort":field.regionSort
+                        };
+                        $.ajax({
+                            url: 'region/saveRegion',
+                            type:"post",
+                            contentType:"application/json",//设置请求参数类型为json字符串
+                            data:JSON.stringify(jsonstr),//将json对象转换成json字符串发送
+                            dataType: "json",
+                            success: function (data) {
+                                var status = data.optStatusCode;
+                                if (status == 10400) {
+                                    layer.close(index); //关闭弹层
+                                    layer.msg("新增成功", {icon: 1});
+                                    $(".layui-laypage-btn").click();//数据刷新
+                                } else {
+                                    layer.msg("新增数据失败");
+                                }
+                            },
+                            error: function () {
+                                layer.msg("新增数据失败");
+                            }
+                        });
+
+                    });
+
+                    submit.trigger('click');
+                }
+            });
+        },
+        batchdel: function(){
+            var checkStatus = table.checkStatus('LAY-region-manage')
+                ,checkData = checkStatus.data; //得到选中的数据
+
+            if(checkData.length === 0){
+                return layer.msg('请选择数据');
+            }
+            layer.confirm('确定删除吗？', function(index) {
+                var selectedUid = "";
+                for(var i=0;i<checkData.length;i++){
+                    selectedUid += checkData[i].id+"、";
+                }
+                selectedUid = selectedUid.substr(0,selectedUid.length-1);
+                $.ajax({
+                    url: 'region/delRegion?id='+selectedUid,
+                    type:"delete",
+                    dataType: "json",
+                    success: function (data) {
+                        var status = data.optStatusCode;
+                        if (status == 10400) {
+                            layer.msg("批量删除成功", {icon: 1});
+                            $(".layui-laypage-btn").click();//数据刷新
+                        } else {
+                            layer.msg("批量删除数据失败");
+                        }
+                    },
+                    error: function () {
+                        layer.msg("批量删除数据失败");
+                    }
+                });
+            });
+        }
+    };
+    
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+</body>
+</html>
